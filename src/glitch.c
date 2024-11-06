@@ -1,4 +1,6 @@
 #include <libgimp/gimp.h>
+#include "utils.h"
+#include <stdio.h>
 
 static void
 query (void)
@@ -44,7 +46,14 @@ run (const gchar *name, gint nparams, const GimpParam  *param, gint *nreturn_val
 	values[0].type = GIMP_PDB_STATUS;
 	values[0].data.d_status = GIMP_PDB_SUCCESS;
 
-	g_message("Test output!\n");
+//	for(int i=0; i<3; i++)
+//		printf("param %d: %p\n", i, param[i].data);
+	GimpDrawable* drawable = gimp_drawable_get(param[2].data.d_drawable);
+	inverse_pixels(drawable);
+
+	gimp_displays_flush();
+	gimp_drawable_detach(drawable);
+	//g_message("Test output!\n");
 }
 
 GimpPlugInInfo PLUG_IN_INFO = {
