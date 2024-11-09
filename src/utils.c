@@ -13,8 +13,8 @@ void get_random_rgn(GimpDrawable* dr, GimpPixelRgn* rgin, GimpPixelRgn* rgout)
 	int rx=lx+rand()%(x2-lx);
 	int ry=ly+rand()%(y2-ly);
 
-	printf("image bounds: %d, %d, %d, %d\n", x1, y1, x2, y2);
-	printf("coordinates: %d, %d, %d, %d\n", lx, ly, rx, ry);
+	//printf("image bounds: %d, %d, %d, %d\n", x1, y1, x2, y2);
+	//printf("coordinates: %d, %d, %d, %d\n", lx, ly, rx, ry);
 	
 	gimp_pixel_rgn_init(rgin, dr, lx, ly, rx-lx, ry-ly, FALSE, FALSE);
 	gimp_pixel_rgn_init(rgout, dr, lx, ly, rx-lx, ry-ly, TRUE, FALSE);
@@ -22,23 +22,30 @@ void get_random_rgn(GimpDrawable* dr, GimpPixelRgn* rgin, GimpPixelRgn* rgout)
 
 void inverse_pixels(GimpPixelRgn* rgin, GimpPixelRgn* rgout, int channels)
 {
-	int width=rgin->w;
-	int height=rgin->h;
-	guchar* buff=g_new(guchar, width*channels);
-	
-	for(int i=0; i<height; i++)
+	guchar* buff=g_new(guchar, rgin->h*rgin->w*channels);
+	gimp_pixel_rgn_get_rect(rgin, buff, rgin->x, rgin->y, rgin->w, rgin->h);
+
+	for(guchar* ptr=buff; (ptr-buff)<rgin->h*rgin->w*channels; ++ptr)
 	{
-		gimp_pixel_rgn_get_row(rgin, buff, rgin->x, rgin->y+i, width);
-		for(int k=0; k<width; k++)
-		{
-			for(int j=0; j<channels; j++)
-			{
-				buff[k*channels+j]=255-buff[k*channels+j];
-			}
-		}
-		gimp_pixel_rgn_set_row(rgout, buff, rgin->x, rgin->y+i, width);
+		*ptr=255-*ptr;
 	}	
+	gimp_pixel_rgn_set_rect(rgout, buff, rgout->x, rgout->y, rgout->w, rgout->h);
+
+	g_free(buff);
+}
+
+void color_corrupt(GimpPixelRgn* rgin, GimpPixelRgn* rgout, int channels)
+{
+	int cmyk_corrupt_type=rand()%channels;
+	guchar* buff=g_new(guchar, rgin->h*rgin->w*channels);
+	gimp_pixel_rgn_get_rect(rgin, buff, rgin->x, rgin->y, rgin->w, rgin->h);
 	
+	for(int i=0; i<rgin->h*rgin->w; i++)
+	{
+		buff[i*channels+cmyk_corrupt_type]=0;
+	}	
+	gimp_pixel_rgn_set_rect(rgout, buff, rgout->x, rgout->y, rgout->w, rgout->h);
+
 	g_free(buff);
 }
 
@@ -59,6 +66,13 @@ void glitch(GimpDrawable* dr)
 		GimpPixelRgn rgin, rgout;
 		get_random_rgn(dr, &rgin, &rgout);
 		inverse_pixels(&rgin, &rgout, channels);
+	}
+
+	for(int j=0; j<rand_regions; j++)
+	{
+		GimpPixelRgn rgin, rgout;
+		get_random_rgn(dr, &rgin, &rgout);
+		color_corrupt(&rgin, &rgout, channels);
 	}
 	printf("Processing finished\n");
 
