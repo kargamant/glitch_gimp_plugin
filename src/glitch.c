@@ -49,7 +49,7 @@ run (const gchar *name, gint nparams, const GimpParam  *param, gint *nreturn_val
 //	for(int i=0; i<3; i++)
 //		printf("param %d: %p\n", i, param[i].data);
 	GimpDrawable* drawable = gimp_drawable_get(param[2].data.d_drawable);
-	inverse_pixels(drawable);
+	glitch(drawable);
 
 	gimp_displays_flush();
 	gimp_drawable_detach(drawable);
