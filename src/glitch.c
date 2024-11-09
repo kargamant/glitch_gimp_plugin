@@ -35,7 +35,7 @@ query (void)
 	G_N_ELEMENTS (args), 0,
 	args, NULL);
 
-	gimp_plugin_menu_register ("plug-in-glitch", "<Image>/Filters/Misc"); 
+	gimp_plugin_menu_register ("plug-in-glitch", "<Image>/Filters/MyFilters"); 
 }
 static void
 run (const gchar *name, gint nparams, const GimpParam  *param, gint *nreturn_vals, GimpParam **return_vals)
