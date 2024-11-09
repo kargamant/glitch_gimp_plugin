@@ -1,6 +1,6 @@
 #include <libgimp/gimp.h>
 
-void glitch(GimpDrawable* dr);
+void glitch(GimpDrawable* dr, int rand_regions, int shift);
 
 void inverse_pixels(GimpPixelRgn* rgin, GimpPixelRgn* rgout, int channels);
 void shift_pixels(GimpPixelRgn* rgin, GimpPixelRgn* rgout, int channels, int shift);

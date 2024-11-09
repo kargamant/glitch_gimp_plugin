@@ -86,7 +86,7 @@ void shift_pixels(GimpPixelRgn* rgin, GimpPixelRgn* rgout, int channels, int shi
 	g_free(buff);
 }
 
-void glitch(GimpDrawable* dr)
+void glitch(GimpDrawable* dr, int rand_regions, int shift)
 {
 	srand(time(NULL));
 	gint x1, y1, x2, y2;
@@ -96,9 +96,6 @@ void glitch(GimpDrawable* dr)
 	printf("Receiving picture bounds\n");
 	gimp_drawable_mask_bounds(dr->drawable_id, &x1, &y1, &x2, &y2);
 	
-	int rand_regions=3;
-	int shift=25;
-
 	for(int i=0; i<rand_regions; i++)
 	{
 		GimpPixelRgn rgin, rgout;
